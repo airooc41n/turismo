@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Turismo en Valladolid - Castilla y León</title>
+    <title>Registro Turístico de Valladolid</title>
     
     <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
     <style>
         * {
@@ -277,8 +277,8 @@
 <body>
     <div class="container">
         <header>
-            <h1>Turismo en Valladolid</h1>
-            <p class="subtitle">Explora los establecimientos turísticos registrados en la provincia de Valladolid</p>
+            <h1>Registro Turístico de Valladolid</h1>
+            <p class="subtitle">Explora todos los establecimientos turísticos registrados en la provincia de Valladolid</p>
         </header>
         
         <div class="app-container">
@@ -309,6 +309,13 @@
                             <option value="">Todas las categorías</option>
                         </select>
                     </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label" for="establishmentFilter">Establecimiento:</label>
+                        <select id="establishmentFilter">
+                            <option value="">Todos los establecimientos</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             
@@ -333,12 +340,16 @@
                     <div class="stat-label">Tipos</div>
                     <div class="stat-value" id="totalTypes">0</div>
                 </div>
+                <div class="stat-card">
+                    <div class="stat-label">Categorías</div>
+                    <div class="stat-value" id="totalCategories">0</div>
+                </div>
             </div>
             
             <div class="info-panel">
                 <h2 class="info-title">Información del Establecimiento Seleccionado</h2>
                 <div class="info-content" id="establishmentInfo">
-                    <p>Selecciona un punto en el mapa o en la lista para ver su información detallada</p>
+                    <p>Selecciona un punto en el mapa para ver su información detallada</p>
                 </div>
             </div>
         </div>
@@ -349,125 +360,9 @@
     </div>
 
     <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <script>
-        // Datos simulados para demostración
-        const simulatedData = [
-            {
-                nombre: "Hotel Palacio de Villena",
-                tipo: "Hotel",
-                categoria: "4 estrellas",
-                direccion: "Calle Mayor, 12",
-                localidad: "Valladolid",
-                provincia: "Valladolid",
-                codigo_postal: "47001",
-                telefono: "983 12 34 56",
-                email: "info@hotelpalaciodevillena.com",
-                web: "https://www.hotelpalaciodevillena.com",
-                fecha_alta: "2015-03-15",
-                coordenadas: { lat: 41.6561, lon: -5.5636 }
-            },
-            {
-                nombre: "Restaurante Casa María",
-                tipo: "Restaurante",
-                categoria: "Terraza",
-                direccion: "Plaza de Zorrilla, 5",
-                localidad: "Valladolid",
-                provincia: "Valladolid",
-                codigo_postal: "47002",
-                telefono: "983 23 45 67",
-                email: "reservas@casamaria.com",
-                web: "https://www.casamaria.com",
-                fecha_alta: "2018-07-22",
-                coordenadas: { lat: 41.6523, lon: -5.5712 }
-            },
-            {
-                nombre: "Apartamentos Rurales El Roble",
-                tipo: "Apartamento Rural",
-                categoria: "3 llaves",
-                direccion: "Carretera de Simancas, km 4",
-                localidad: "Pedrajas de San Esteban",
-                provincia: "Valladolid",
-                codigo_postal: "47120",
-                telefono: "983 45 67 89",
-                email: "info@elroble.com",
-                web: "https://www.elroblerural.com",
-                fecha_alta: "2019-11-05",
-                coordenadas: { lat: 41.7234, lon: -5.4321 }
-            },
-            {
-                nombre: "Hotel Rural Monasterio de Santa Clara",
-                tipo: "Hotel Rural",
-                categoria: "4 estrellas",
-                direccion: "Calle Convento, 10",
-                localidad: "Medina del Campo",
-                provincia: "Valladolid",
-                codigo_postal: "47400",
-                telefono: "983 56 78 90",
-                email: "reservas@monasteriosantaclara.com",
-                web: "https://www.monasteriosantaclara.com",
-                fecha_alta: "2017-01-30",
-                coordenadas: { lat: 40.9876, lon: -5.6543 }
-            },
-            {
-                nombre: "Camping Río Duero",
-                tipo: "Camping",
-                categoria: "Tercera",
-                direccion: "Paseo del Río Duero, s/n",
-                localidad: "Valladolid",
-                provincia: "Valladolid",
-                codigo_postal: "47009",
-                telefono: "983 67 89 01",
-                email: "info@campingrioduero.com",
-                web: "https://www.campingrioduero.com",
-                fecha_alta: "2020-05-14",
-                coordenadas: { lat: 41.6321, lon: -5.6109 }
-            },
-            {
-                nombre: "Hostal El Pinar",
-                tipo: "Hostal",
-                categoria: "2 estrellas",
-                direccion: "Avenida de Madrid, 45",
-                localidad: "Valladolid",
-                provincia: "Valladolid",
-                codigo_postal: "47008",
-                telefono: "983 78 90 12",
-                email: "contacto@elpinar.com",
-                web: "https://www.elpinar.com",
-                fecha_alta: "2016-09-10",
-                coordenadas: { lat: 41.6456, lon: -5.5987 }
-            },
-            {
-                nombre: "Restaurante El Patio",
-                tipo: "Restaurante",
-                categoria: "Gastronomía Tradicional",
-                direccion: "Calle Real, 23",
-                localidad: "Peñaflor de Hornija",
-                provincia: "Valladolid",
-                codigo_postal: "47670",
-                telefono: "983 89 01 23",
-                email: "info@elpatio.com",
-                web: "https://www.elpatiorestaurante.com",
-                fecha_alta: "2019-02-18",
-                coordenadas: { lat: 41.5678, lon: -5.3456 }
-            },
-            {
-                nombre: "Aparthotel Las Torres",
-                tipo: "Apartahotel",
-                categoria: "3 estrellas",
-                direccion: "Calle San Francisco, 15",
-                localidad: "Tordesillas",
-                provincia: "Valladolid",
-                codigo_postal: "47100",
-                telefono: "983 90 12 34",
-                email: "reservas@lastorres.com",
-                web: "https://www.aparthotellastorres.com",
-                fecha_alta: "2018-11-25",
-                coordenadas: { lat: 40.8765, lon: -5.5432 }
-            }
-        ];
-
         // Variables globales
         let map;
         let markers = [];
@@ -476,15 +371,18 @@
         let uniqueLocalities = new Set();
         let uniqueTypes = new Set();
         let uniqueCategories = new Set();
+        let uniqueEstablishments = new Set();
         
         // Elementos del DOM
         const searchInput = document.getElementById('searchInput');
         const typeFilter = document.getElementById('typeFilter');
         const localityFilter = document.getElementById('localityFilter');
         const categoryFilter = document.getElementById('categoryFilter');
+        const establishmentFilter = document.getElementById('establishmentFilter');
         const totalEstablishmentsEl = document.getElementById('totalEstablishments');
         const totalLocalitiesEl = document.getElementById('totalLocalities');
         const totalTypesEl = document.getElementById('totalTypes');
+        const totalCategoriesEl = document.getElementById('totalCategories');
         const establishmentInfo = document.getElementById('establishmentInfo');
         const resultsCount = document.getElementById('resultsCount');
         
@@ -501,26 +399,62 @@
             }).addTo(map);
         }
         
+        // Obtener datos de la API usando un proxy CORS
+        async function fetchTourismData() {
+            try {
+                // Usamos un proxy CORS para evitar problemas de seguridad
+                const proxyUrl = 'https://api.allorigins.win/raw?url=';
+                const apiUrl = 'https://analisis.datosabiertos.jcyl.es/api/explore/v2.1/catalog/datasets/registro-de-turismo-de-castilla-y-leon/records?limit=1000&refine=provincia%3A%22Valladolid%22';
+                
+                const response = await fetch(proxyUrl + encodeURIComponent(apiUrl));
+                
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                return data.results;
+            } catch (error) {
+                console.error('Error al obtener los datos:', error);
+                document.querySelector('.map-container').innerHTML = `
+                    <div class="error">
+                        <p>No se pudieron cargar los datos de turismo. Por favor, inténtalo de nuevo más tarde.</p>
+                        <p>Detalles del error: ${error.message}</p>
+                    </div>
+                `;
+                return [];
+            }
+        }
+        
         // Procesar los datos y actualizar la interfaz
-        function processAndDisplayData(data) {
+        async function processAndDisplayData() {
+            const data = await fetchTourismData();
+            
+            if (!data || data.length === 0) {
+                return;
+            }
+            
             establishments = data;
             filteredEstablishments = [...data]; // Inicialmente todos
             
-            // Extraer localidades, tipos y categorías únicas
+            // Extraer valores únicos para filtros
             uniqueLocalities = new Set();
             uniqueTypes = new Set();
             uniqueCategories = new Set();
+            uniqueEstablishments = new Set();
             
             establishments.forEach(est => {
                 if (est.localidad) uniqueLocalities.add(est.localidad);
                 if (est.tipo) uniqueTypes.add(est.tipo);
                 if (est.categoria) uniqueCategories.add(est.categoria);
+                if (est.establecimiento) uniqueEstablishments.add(est.establecimiento);
             });
             
             // Actualizar estadísticas
             totalEstablishmentsEl.textContent = establishments.length.toLocaleString('es-ES');
             totalLocalitiesEl.textContent = uniqueLocalities.size.toLocaleString('es-ES');
             totalTypesEl.textContent = uniqueTypes.size.toLocaleString('es-ES');
+            totalCategoriesEl.textContent = uniqueCategories.size.toLocaleString('es-ES');
             
             // Actualizar filtros
             updateFilters();
@@ -540,6 +474,9 @@
             
             // Actualizar filtro de categorías
             updateFilterOptions(categoryFilter, Array.from(uniqueCategories).sort(), '');
+            
+            // Actualizar filtro de establecimientos
+            updateFilterOptions(establishmentFilter, Array.from(uniqueEstablishments).sort(), '');
         }
         
         // Actualizar opciones de un filtro
@@ -612,6 +549,10 @@
                     <div class="info-value">${est.categoria || 'No disponible'}</div>
                 </div>
                 <div class="info-item">
+                    <div class="info-label">Establecimiento</div>
+                    <div class="info-value">${est.establecimiento || 'No disponible'}</div>
+                </div>
+                <div class="info-item">
                     <div class="info-label">Dirección</div>
                     <div class="info-value">${est.direccion || 'No disponible'}</div>
                 </div>
@@ -657,6 +598,7 @@
             const selectedType = typeFilter.value;
             const selectedLocality = localityFilter.value;
             const selectedCategory = categoryFilter.value;
+            const selectedEstablishment = establishmentFilter.value;
             
             filteredEstablishments = establishments.filter(est => {
                 // Filtrar por tipo
@@ -674,12 +616,18 @@
                     return false;
                 }
                 
+                // Filtrar por tipo de establecimiento
+                if (selectedEstablishment && est.establecimiento !== selectedEstablishment) {
+                    return false;
+                }
+                
                 // Filtrar por término de búsqueda
                 if (searchTerm) {
                     const searchableText = [
                         est.nombre,
                         est.tipo,
                         est.categoria,
+                        est.establecimiento,
                         est.localidad,
                         est.direccion
                     ].join(' ').toLowerCase();
@@ -698,15 +646,14 @@
         // Inicializar la aplicación
         function initApp() {
             initMap();
-            
-            // Usar datos simulados
-            processAndDisplayData(simulatedData);
+            processAndDisplayData();
             
             // Eventos de filtrado
             searchInput.addEventListener('input', filterEstablishments);
             typeFilter.addEventListener('change', filterEstablishments);
             localityFilter.addEventListener('change', filterEstablishments);
             categoryFilter.addEventListener('change', filterEstablishments);
+            establishmentFilter.addEventListener('change', filterEstablishments);
         }
         
         // Iniciar la aplicación cuando se cargue la página
