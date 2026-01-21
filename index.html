@@ -6,7 +6,7 @@
     <title>Turismo en Valladolid - Castilla y León</title>
     
     <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     
     <style>
         * {
@@ -235,34 +235,6 @@
             text-align: center;
         }
         
-        .establishment-list {
-            max-height: 300px;
-            overflow-y: auto;
-            padding: 10px;
-        }
-        
-        .establishment-item {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        
-        .establishment-item:hover {
-            background: #f0f5ff;
-        }
-        
-        .establishment-name {
-            font-weight: 600;
-            color: #1a3a6c;
-            margin-bottom: 5px;
-        }
-        
-        .establishment-details {
-            font-size: 0.9rem;
-            color: #5a7ca5;
-        }
-        
         footer {
             text-align: center;
             padding: 30px 0;
@@ -377,10 +349,10 @@
     </div>
 
     <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     
     <script>
-        // Datos simulados para demostración en CodePen
+        // Datos simulados para demostración
         const simulatedData = [
             {
                 nombre: "Hotel Palacio de Villena",
@@ -451,6 +423,48 @@
                 web: "https://www.campingrioduero.com",
                 fecha_alta: "2020-05-14",
                 coordenadas: { lat: 41.6321, lon: -5.6109 }
+            },
+            {
+                nombre: "Hostal El Pinar",
+                tipo: "Hostal",
+                categoria: "2 estrellas",
+                direccion: "Avenida de Madrid, 45",
+                localidad: "Valladolid",
+                provincia: "Valladolid",
+                codigo_postal: "47008",
+                telefono: "983 78 90 12",
+                email: "contacto@elpinar.com",
+                web: "https://www.elpinar.com",
+                fecha_alta: "2016-09-10",
+                coordenadas: { lat: 41.6456, lon: -5.5987 }
+            },
+            {
+                nombre: "Restaurante El Patio",
+                tipo: "Restaurante",
+                categoria: "Gastronomía Tradicional",
+                direccion: "Calle Real, 23",
+                localidad: "Peñaflor de Hornija",
+                provincia: "Valladolid",
+                codigo_postal: "47670",
+                telefono: "983 89 01 23",
+                email: "info@elpatio.com",
+                web: "https://www.elpatiorestaurante.com",
+                fecha_alta: "2019-02-18",
+                coordenadas: { lat: 41.5678, lon: -5.3456 }
+            },
+            {
+                nombre: "Aparthotel Las Torres",
+                tipo: "Apartahotel",
+                categoria: "3 estrellas",
+                direccion: "Calle San Francisco, 15",
+                localidad: "Tordesillas",
+                provincia: "Valladolid",
+                codigo_postal: "47100",
+                telefono: "983 90 12 34",
+                email: "reservas@lastorres.com",
+                web: "https://www.aparthotellastorres.com",
+                fecha_alta: "2018-11-25",
+                coordenadas: { lat: 40.8765, lon: -5.5432 }
             }
         ];
 
