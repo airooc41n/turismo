@@ -380,6 +380,80 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <script>
+        // Datos simulados para demostración en CodePen
+        const simulatedData = [
+            {
+                nombre: "Hotel Palacio de Villena",
+                tipo: "Hotel",
+                categoria: "4 estrellas",
+                direccion: "Calle Mayor, 12",
+                localidad: "Valladolid",
+                provincia: "Valladolid",
+                codigo_postal: "47001",
+                telefono: "983 12 34 56",
+                email: "info@hotelpalaciodevillena.com",
+                web: "https://www.hotelpalaciodevillena.com",
+                fecha_alta: "2015-03-15",
+                coordenadas: { lat: 41.6561, lon: -5.5636 }
+            },
+            {
+                nombre: "Restaurante Casa María",
+                tipo: "Restaurante",
+                categoria: "Terraza",
+                direccion: "Plaza de Zorrilla, 5",
+                localidad: "Valladolid",
+                provincia: "Valladolid",
+                codigo_postal: "47002",
+                telefono: "983 23 45 67",
+                email: "reservas@casamaria.com",
+                web: "https://www.casamaria.com",
+                fecha_alta: "2018-07-22",
+                coordenadas: { lat: 41.6523, lon: -5.5712 }
+            },
+            {
+                nombre: "Apartamentos Rurales El Roble",
+                tipo: "Apartamento Rural",
+                categoria: "3 llaves",
+                direccion: "Carretera de Simancas, km 4",
+                localidad: "Pedrajas de San Esteban",
+                provincia: "Valladolid",
+                codigo_postal: "47120",
+                telefono: "983 45 67 89",
+                email: "info@elroble.com",
+                web: "https://www.elroblerural.com",
+                fecha_alta: "2019-11-05",
+                coordenadas: { lat: 41.7234, lon: -5.4321 }
+            },
+            {
+                nombre: "Hotel Rural Monasterio de Santa Clara",
+                tipo: "Hotel Rural",
+                categoria: "4 estrellas",
+                direccion: "Calle Convento, 10",
+                localidad: "Medina del Campo",
+                provincia: "Valladolid",
+                codigo_postal: "47400",
+                telefono: "983 56 78 90",
+                email: "reservas@monasteriosantaclara.com",
+                web: "https://www.monasteriosantaclara.com",
+                fecha_alta: "2017-01-30",
+                coordenadas: { lat: 40.9876, lon: -5.6543 }
+            },
+            {
+                nombre: "Camping Río Duero",
+                tipo: "Camping",
+                categoria: "Tercera",
+                direccion: "Paseo del Río Duero, s/n",
+                localidad: "Valladolid",
+                provincia: "Valladolid",
+                codigo_postal: "47009",
+                telefono: "983 67 89 01",
+                email: "info@campingrioduero.com",
+                web: "https://www.campingrioduero.com",
+                fecha_alta: "2020-05-14",
+                coordenadas: { lat: 41.6321, lon: -5.6109 }
+            }
+        ];
+
         // Variables globales
         let map;
         let markers = [];
@@ -411,31 +485,6 @@
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
-        }
-        
-        // Obtener datos de la API
-        async function fetchTourismData() {
-            try {
-                const response = await fetch(
-                    'https://analisis.datosabiertos.jcyl.es/api/explore/v2.1/catalog/datasets/registro-de-turismo-de-castilla-y-leon/records?limit=1000&refine=provincia%3A%22Valladolid%22'
-                );
-                
-                if (!response.ok) {
-                    throw new Error(`Error HTTP: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                return data.results;
-            } catch (error) {
-                console.error('Error al obtener los datos:', error);
-                document.querySelector('.map-container').innerHTML = `
-                    <div class="error">
-                        <p>No se pudieron cargar los datos de turismo. Por favor, inténtalo de nuevo más tarde.</p>
-                        <p>Detalles del error: ${error.message}</p>
-                    </div>
-                `;
-                return [];
-            }
         }
         
         // Procesar los datos y actualizar la interfaz
@@ -633,13 +682,11 @@
         }
         
         // Inicializar la aplicación
-        async function initApp() {
+        function initApp() {
             initMap();
             
-            const data = await fetchTourismData();
-            if (data.length > 0) {
-                processAndDisplayData(data);
-            }
+            // Usar datos simulados
+            processAndDisplayData(simulatedData);
             
             // Eventos de filtrado
             searchInput.addEventListener('input', filterEstablishments);
@@ -653,5 +700,4 @@
     </script>
 </body>
 </html>
-
 
