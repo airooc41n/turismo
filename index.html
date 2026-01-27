@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Valladolid 2026 | El Cine del Cosmos</title>
+    <title>Valladolid Starlight | Odisea Cósmica</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -14,7 +14,7 @@
             --gold: #d4af37;
             --bg: #010307;
             --white: #ffffff;
-            --transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            --blue-nebula: #1a2a44;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -23,7 +23,7 @@
             color: var(--white); 
             font-family: 'Montserrat', sans-serif;
             overflow-x: hidden;
-            height: 1400vh; /* Historia extendida */
+            height: 1800vh; /* Historia más larga con más espacio para efectos */
         }
 
         /* --- Viewport Fijo (Cámara) --- */
@@ -40,6 +40,7 @@
             display: flex; align-items: center; justify-content: center;
             opacity: 0; visibility: hidden;
             overflow: hidden;
+            background-color: transparent; /* Permitir ver el fondo de partículas */
         }
 
         /* --- Visuales Dinámicos --- */
@@ -47,8 +48,8 @@
             position: absolute;
             width: 100%; height: 100%;
             object-fit: cover;
-            filter: brightness(0.3) contrast(1.2);
-            transform: scale(1.3);
+            filter: brightness(0.2) contrast(1.2); /* Más oscuro para resaltar elementos */
+            transform: scale(1.4); /* Zoom inicial más pronunciado */
         }
 
         .content {
@@ -58,10 +59,14 @@
             width: 90%;
             max-width: 1100px;
             padding: 20px;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
         }
 
         h1, h2 { font-family: 'Cinzel', serif; color: var(--gold); letter-spacing: 5px; text-transform: uppercase; }
-        h1 { font-size: clamp(2rem, 10vw, 6rem); line-height: 1; margin-bottom: 20px; }
+        h1 { font-size: clamp(2rem, 10vw, 6rem); line-height: 1; margin-bottom: 20px; text-shadow: 0 0 15px rgba(212,175,55,0.7); }
         h2 { font-size: clamp(1.5rem, 6vw, 3.5rem); margin-bottom: 1.5rem; }
         p { font-size: clamp(0.9rem, 2vw, 1.4rem); font-weight: 200; line-height: 1.6; max-width: 800px; margin: 0 auto; }
 
@@ -117,18 +122,81 @@
         }
         .card h3 { color: var(--gold); font-family: 'Cinzel'; margin-bottom: 10px; font-size: 1.2rem; }
 
-        /* --- Estrellas de Fondo --- */
+        /* --- Fondo Estelar y Partículas --- */
         #star-field {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: url('https://www.transparenttextures.com/patterns/stardust.png');
-            z-index: -1; opacity: 0.3;
+            background: transparent;
+            z-index: -1;
+            perspective: 500px;
         }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 5s infinite ease-in-out alternate;
+            opacity: 0;
+        }
+
+        .particle-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -2; /* Detrás de las estrellas */
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(255,255,255,0.8), rgba(255,255,255,0.2));
+            border-radius: 50%;
+            opacity: 0;
+            animation: particle-move 20s infinite linear;
+        }
+
+        @keyframes particle-move {
+            0% { transform: translate(var(--x1), var(--y1)) scale(0); opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { transform: translate(var(--x2), var(--y2)) scale(1); opacity: 0; }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* --- Planetas y Constelaciones --- */
+        .celestial-object {
+            position: absolute;
+            opacity: 0;
+            will-change: transform, opacity;
+        }
+
+        .planet {
+            width: clamp(50px, 10vw, 150px); height: clamp(50px, 10vw, 150px);
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            filter: saturate(0.8);
+        }
+
+        .constellation {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            font-size: clamp(0.8rem, 3vw, 1.8rem);
+            letter-spacing: 2px;
+            white-space: nowrap;
+            text-shadow: 0 0 10px rgba(212,175,55,0.5);
+        }
+
     </style>
 </head>
 <body>
 
     <div id="star-field"></div>
+    <div class="particle-bg" id="particle-container"></div>
     <div class="mouse-icon"><div class="mouse-wheel"></div></div>
 
     <div class="viewport">
@@ -137,8 +205,10 @@
             <img src="https://provinciadevalladolid.com/wp-content/uploads/2023/10/astroturismo-valladolid-noche-estrellas-cat.jpg" class="bg-img">
             <div class="content">
                 <h1>Valladolid <br> Starlight</h1>
-                <p>Donde el silencio de la meseta se funde con el eco de las galaxias.</p>
+                <p>Donde el silencio de la meseta se funde con el eco de las galaxias. Una provincia que mira al cielo.</p>
             </div>
+            <div class="celestial-object planet" id="jupiter" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/2/2b/Jupiter_and_its_shrunken_Great_Red_Spot.jpg'); top: 10%; left: 10%;"></div>
+            <div class="celestial-object constellation" id="ursa-major" style="bottom: 15%; right: 10%;">OSSA MAJOR</div>
         </section>
 
         <section class="scene">
@@ -152,6 +222,8 @@
                     <div class="card"><h3>Certificación</h3><p>Cielo protegido contra la contaminación lumínica.</p></div>
                 </div>
             </div>
+            <div class="celestial-object planet" id="mars" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/0/02/OSIRIS_Mars_true_color.jpg'); top: 20%; right: 15%;"></div>
+            <div class="celestial-object constellation" id="orion" style="top: 15%; left: 20%;">ORION</div>
         </section>
 
         <section class="scene">
@@ -159,15 +231,20 @@
             <div class="content">
                 <h2>Guardianes del Firmamento</h2>
                 <p>Fuensaldaña, Peñafiel e Íscar. Fortalezas que han visto pasar cometas durante siglos y hoy son nuestros mejores miradores.</p>
+                <p>Donde la historia se fusiona con la inmensidad del espacio, ofreciendo panorámicas estelares inigualables.</p>
             </div>
+            <div class="celestial-object planet" id="saturn" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/c/c7/Saturn_during_Equinox.jpg'); bottom: 10%; left: 10%;"></div>
+            <div class="celestial-object constellation" id="cygnus" style="top: 25%; right: 10%;">CYGNUS</div>
         </section>
 
         <section class="scene">
             <img src="https://provinciadevalladolid.com/wp-content/uploads/2023/10/astroturismo-tudela-duero-noche-estrellas-valladolid-astronomy-tourism.jpg" class="bg-img">
             <div class="content">
                 <h2>La Gran Cita</h2>
-                <p>La mecánica celeste prepara su mayor espectáculo. Un evento que no se repetirá en generaciones.</p>
+                <p>La mecánica celeste prepara su mayor espectáculo. Un evento que no se repetirá en generaciones, una danza cósmica.</p>
+                <p>Valladolid se prepara para ser el escenario de un fenómeno que trasciende el tiempo, invitando a la admiración.</p>
             </div>
+            <div class="celestial-object planet" id="neptune" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/6/63/Neptune_-_Voyager_2_%2829347980842%29_flatten_crop.jpg'); top: 10%; right: 5%;"></div>
         </section>
 
         <section class="scene" id="eclipse-scene">
@@ -178,30 +255,36 @@
             </div>
             <div class="content" style="margin-top: 50vh;">
                 <h2>12 de Agosto, 2026</h2>
-                <p>La sombra de la Luna borrará el día. Valladolid será el epicentro de la oscuridad total.</p>
+                <h3>El Día que se Hizo Noche</h3>
+                <p>La sombra de la Luna borrará el día. Valladolid será el epicentro de la oscuridad total. Un espectáculo que detiene el aliento.</p>
+                <p style="font-size: 1rem; color: var(--gold);"> (¡Solo quedan 586 días para este evento sin precedentes!) </p>
             </div>
+        </section>
+
+        <section class="scene">
+            <img src="https://provinciadevalladolid.com/wp-content/uploads/2023/10/astroturismo-penafiel-noche-estrellas-valladolid.jpg" class="bg-img">
+            <div class="content">
+                <h2>Mucho más que mirar</h2>
+                <p>Cenas temáticas, maridajes bajo la Vía Láctea y estancias en alojamientos certificados Starlight. Una experiencia multisensorial.</p>
+                <div class="grid">
+                    <div class="card"><h3>Enoturismo</h3><p>Vinos de la Ribera bajo las constelaciones.</p></div>
+                    <div class="card"><h3>Fotografía</h3><p>Talleres nocturnos en paisajes icónicos.</p></div>
+                    <div class="card"><h3>Cultura</h3><p>Rutas guiadas que enlazan historia y cielo.</p></div>
+                </div>
+            </div>
+            <div class="celestial-object planet" id="venus" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/e/e5/Venus-real_color.jpg'); bottom: 20%; right: 15%;"></div>
+            <div class="celestial-object constellation" id="lyra" style="top: 10%; left: 5%;">LYRA</div>
         </section>
 
         <section class="scene">
             <img src="https://provinciadevalladolid.com/wp-content/uploads/2023/10/astroturismo-abadia-retuerta-noche-estrellas-valladolid-astronomy-tourism.jpg" class="bg-img">
             <div class="content">
-                <h2>Mucho más que mirar</h2>
-                <p>Cenas temáticas, maridajes bajo la Vía Láctea y estancias en alojamientos certificados Starlight.</p>
-                <div class="grid">
-                    <div class="card"><h3>Enoturismo</h3><p>Vinos de la Ribera bajo las constelaciones.</p></div>
-                    <div class="card"><h3>Fotografía</h3><p>Talleres nocturnos en paisajes icónicos.</p></div>
-                </div>
-            </div>
-        </section>
-
-        <section class="scene">
-            <img src="https://provinciadevalladolid.com/wp-content/uploads/2023/10/astroturismo-noche-estrellas-valladolid-cat.jpg" class="bg-img">
-            <div class="content">
-                <h2>El cielo te espera</h2>
-                <p>Prepara tus ojos. El universo se ve mejor desde Valladolid.</p>
+                <h2>El Legado de las Estrellas</h2>
+                <p>Una experiencia que te conecta con el cosmos y la historia, dejando un recuerdo imborrable en tu alma. Valladolid, tu destino estelar.</p>
                 <br><br>
-                <a href="https://provinciadevalladolid.com/astroturismo" style="display:inline-block; border: 1px solid var(--gold); padding: 18px 45px; color: var(--gold); text-decoration: none; border-radius: 50px; font-weight: bold; letter-spacing: 2px; transition: 0.3s;" onmouseover="this.style.background='var(--gold)'; this.style.color='black'">DESCUBRIR MÁS</a>
+                <a href="https://provinciadevalladolid.com/astroturismo" style="display:inline-block; border: 1px solid var(--gold); padding: 18px 45px; color: var(--gold); text-decoration: none; border-radius: 50px; font-weight: bold; letter-spacing: 2px; transition: 0.3s;" onmouseover="this.style.background='var(--gold)'; this.style.color='black'">PLANIFICA TU VISITA</a>
             </div>
+            <div class="celestial-object planet" id="mercury" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/d/d9/Mercury_in_color_-_ProRes.png'); top: 5%; left: 5%;"></div>
         </section>
 
     </div>
@@ -210,7 +293,73 @@
         gsap.registerPlugin(ScrollTrigger);
 
         const scenes = gsap.utils.toArray(".scene");
-        
+        const numStars = 100; // Más estrellas
+        const numParticles = 50; // Partículas de fondo
+        const eclipseDate = new Date('August 12, 2026 19:30:00 CET'); // Fecha y hora del eclipse
+
+        // --- Generación Dinámica de Estrellas ---
+        function createStars() {
+            const starField = document.getElementById('star-field');
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                const size = Math.random() * 3 + 1; // 1 to 4px
+                star.style.width = star.style.height = `${size}px`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.transform = `translateZ(${Math.random() * 500}px)`; // Para efecto 3D
+                star.style.animationDelay = `${Math.random() * 5}s`;
+                gsap.to(star, {
+                    opacity: 1, // Visible al inicio
+                    scrollTrigger: { scrub: true }
+                });
+                starField.appendChild(star);
+            }
+        }
+        createStars();
+
+        // --- Generación Dinámica de Partículas de Fondo ---
+        function createParticles() {
+            const particleContainer = document.getElementById('particle-container');
+            for (let i = 0; i < numParticles; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                const size = Math.random() * 10 + 5; // 5 to 15px
+                particle.style.width = particle.style.height = `${size}px`;
+                
+                // Variantes para el movimiento de las partículas
+                const x1 = `${Math.random() * 100 - 50}vw`;
+                const y1 = `${Math.random() * 100 - 50}vh`;
+                const x2 = `${Math.random() * 100 - 50}vw`;
+                const y2 = `${Math.random() * 100 + 100}vh`; // Movimiento hacia abajo
+                
+                particle.style.setProperty('--x1', x1);
+                particle.style.setProperty('--y1', y1);
+                particle.style.setProperty('--x2', x2);
+                particle.style.setProperty('--y2', y2);
+                particle.style.animationDelay = `${Math.random() * 20}s`; // Retraso aleatorio
+                particleContainer.appendChild(particle);
+            }
+        }
+        createParticles();
+
+
+        // --- CÁLCULO DE DÍAS PARA EL ECLIPSE ---
+        function updateCountdown() {
+            const now = new Date();
+            const timeDiff = eclipseDate.getTime() - now.getTime();
+            const days = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+            
+            const countdownElement = document.querySelector('#eclipse-scene .content p:last-of-type');
+            if (countdownElement && days > 0) {
+                countdownElement.textContent = `(¡Solo quedan ${days} días para este evento sin precedentes!)`;
+            } else if (countdownElement && days <= 0) {
+                 countdownElement.textContent = `(¡El Eclipse ya está aquí o ha pasado! Disfruta la experiencia.)`;
+            }
+        }
+        updateCountdown();
+        setInterval(updateCountdown, 3600000); // Actualiza cada hora
+
         // --- TIMELINE MAESTRA ---
         const master = gsap.timeline({
             scrollTrigger: {
@@ -225,34 +374,38 @@
             const bg = scene.querySelector(".bg-img");
             const content = scene.querySelector(".content");
             const cards = scene.querySelectorAll(".card");
+            const celestialObjects = scene.querySelectorAll(".celestial-object");
 
-            // Entrada
-            master.to(scene, { autoAlpha: 1, duration: 1, onStart: () => gsap.set(scene, {visibility: "visible"}) });
-            if(bg) master.to(bg, { scale: 1, duration: 2 }, "-=1");
-            if(cards.length > 0) master.to(cards, { opacity: 1, y: 0, stagger: 0.2, duration: 1 }, "-=1");
+            // Entrada de la escena
+            master.to(scene, { autoAlpha: 1, duration: 1.5, onStart: () => gsap.set(scene, {visibility: "visible"}) });
+            if(bg) master.to(bg, { scale: 1, duration: 2 }, "<");
+            if(content) master.fromTo(content, { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1.5, ease: "power2.out" }, "<0.5");
+            if(cards.length > 0) master.fromTo(cards, { opacity: 0, y: 50 }, { opacity: 1, y: 0, stagger: 0.2, duration: 1, ease: "power2.out" }, "<0.7");
+            if(celestialObjects.length > 0) master.fromTo(celestialObjects, { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, stagger: 0.3, duration: 1.5, ease: "back.out(1.7)" }, "<0.5");
+
 
             // Animación especial Eclipse
             if (scene.id === "eclipse-scene") {
                 master.to("#moon", { x: "0%", duration: 3, ease: "power1.inOut" }, "-=1")
                       .to("#corona", { opacity: 1, scale: 1.2, duration: 1 }, "-=1")
-                      .to("body", { backgroundColor: "#000", duration: 1 }, "-=2");
+                      .to("body", { backgroundColor: "#000", duration: 1 }, "-=1.5");
             }
 
-            // Salida (menos la última)
+            // Salida de la escena (menos la última)
             if (i < scenes.length - 1) {
-                master.to(scene, { autoAlpha: 0, duration: 1, delay: 1 });
+                master.to(scene, { autoAlpha: 0, duration: 1.5, delay: 1 });
             }
         });
 
         // Parallax de estrellas
-        gsap.to("#star-field", { y: -300, scrollTrigger: { scrub: true } });
+        gsap.to("#star-field", { y: -500, scrollTrigger: { scrub: true } });
 
         // Ocultar icono mouse al final
         ScrollTrigger.create({
             trigger: "body",
-            start: "85% top",
-            onEnter: () => gsap.to(".mouse-icon", {opacity: 0}),
-            onLeaveBack: () => gsap.to(".mouse-icon", {opacity: 1})
+            start: "90% top",
+            onEnter: () => gsap.to(".mouse-icon", {opacity: 0, duration: 0.5}),
+            onLeaveBack: () => gsap.to(".mouse-icon", {opacity: 1, duration: 0.5})
         });
 
         window.scrollTo(0, 0);
